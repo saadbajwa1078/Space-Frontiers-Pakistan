@@ -259,10 +259,11 @@ function apiBase() {
 }
 
 async function apiPost(url, data) {
+  const base = apiBase();
   const res = await fetch(apiBase() + url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'same-origin',
+    credentials: base ? 'include' : 'same-origin',
     body: JSON.stringify(data || {}),
   });
   let payload = null;
@@ -278,7 +279,8 @@ async function apiPost(url, data) {
 }
 
 async function apiGet(url) {
-  const res = await fetch(apiBase() + url, { credentials: 'same-origin' });
+  const base = apiBase();
+  const res = await fetch(base + url, { credentials: base ? 'include' : 'same-origin' });
   let payload = null;
   try { payload = await res.json(); } catch (_) { payload = null; }
   if (!res.ok) {

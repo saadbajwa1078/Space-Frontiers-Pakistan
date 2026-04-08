@@ -7,6 +7,28 @@ const { loadDb, saveDb, findUserByEmail, findUserById, createUser } = require(".
 
 const app = express();
 
+// CORS for local dev servers (e.g. Live Server on :5500)
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  return /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(origin);
+}
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (isAllowedOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    // Allow common headers sent by browsers/dev servers
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  }
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 app.use(express.json());
 
 app.use(

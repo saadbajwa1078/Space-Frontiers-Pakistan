@@ -247,8 +247,19 @@
 })();
 
 // ======== API HELPERS (AUTH) ========
+function apiBase() {
+  // If you open the site via file:// or via a different dev server port,
+  // calls like /api/register will hit the wrong server and fail (404/405).
+  // When on localhost, default to the Flask backend on :5000.
+  const loc = window.location;
+  const isLocalHost = loc.hostname === '127.0.0.1' || loc.hostname === 'localhost';
+  if (loc.protocol === 'file:') return 'http://127.0.0.1:5000';
+  if (isLocalHost && loc.port && loc.port !== '5000') return 'http://127.0.0.1:5000';
+  return '';
+}
+
 async function apiPost(url, data) {
-  const res = await fetch(url, {
+  const res = await fetch(apiBase() + url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'same-origin',
@@ -267,7 +278,7 @@ async function apiPost(url, data) {
 }
 
 async function apiGet(url) {
-  const res = await fetch(url, { credentials: 'same-origin' });
+  const res = await fetch(apiBase() + url, { credentials: 'same-origin' });
   let payload = null;
   try { payload = await res.json(); } catch (_) { payload = null; }
   if (!res.ok) {

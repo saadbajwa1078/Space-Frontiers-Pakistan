@@ -250,7 +250,7 @@
 function apiBase() {
   // If you open the site via file:// or via a different dev server port,
   // calls like /api/register will hit the wrong server and fail (404/405).
-  // When on localhost, default to the Flask backend on :5000.
+  // When on localhost, default to the backend on :5000.
   const loc = window.location;
   const isLocalHost = loc.hostname === '127.0.0.1' || loc.hostname === 'localhost';
   if (loc.protocol === 'file:') return 'http://127.0.0.1:5000';

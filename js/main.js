@@ -74,9 +74,34 @@
 
   apiGet('/api/me').then(function(res) {
     if (!res || !res.authenticated) return;
-    authLink.textContent = 'Logout';
+    const user = res.user || {};
+    const profile = user.profile || {};
+    const firstName = String(profile.firstName || '').trim();
+    const lastName = String(profile.lastName || '').trim();
+    const displayName = (firstName || lastName) ? (firstName + (lastName ? (' ' + lastName) : '')) : 'Account';
+
+    // Show name where "Login" used to be
+    authLink.textContent = displayName;
     authLink.setAttribute('href', '#');
-    authLink.addEventListener('click', function(e) {
+
+    // Hide "Register Now" button when logged in
+    const registerCta = document.querySelector('.nav-links a.nav-cta');
+    if (registerCta) registerCta.style.display = 'none';
+
+    // Add a Logout button next to the name
+    let logoutLink = document.getElementById('logoutLink');
+    if (!logoutLink) {
+      logoutLink = document.createElement('a');
+      logoutLink.id = 'logoutLink';
+      logoutLink.href = '#';
+      logoutLink.className = 'nav-cta';
+      logoutLink.textContent = 'Logout';
+      const li = document.createElement('li');
+      li.appendChild(logoutLink);
+      authLink.closest('li').insertAdjacentElement('afterend', li);
+    }
+
+    logoutLink.addEventListener('click', function(e) {
       e.preventDefault();
       apiPost('/api/logout', {}).finally(function() {
         window.location.href = 'index.html';
@@ -420,7 +445,7 @@ async function apiGet(url) {
     }).then(function() {
       form.style.display = 'none';
       if (success) success.style.display = 'block';
-      setTimeout(function() { window.location.href = 'index.html'; }, 900);
+      window.location.href = 'index.html';
     }).catch(function(err) {
       showFormMessage(err && err.message ? err.message : 'Registration failed.');
     }).finally(function() {

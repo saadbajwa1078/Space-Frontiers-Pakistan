@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Space Frontiers Pakistan 2026</title>
+    <meta name="description" content="Login to your Space Frontiers Pakistan 2026 account." />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+  </head>
+  <body>
+
+    <nav class="navbar scrolled" id="navbar">
+      <div class="nav-container">
+        <a href="index.html" class="nav-logo">
+          <span class="logo-icon">&#9733;</span>
+          <span>Space Frontiers <em>Pakistan</em></span>
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="agenda.html">Agenda</a></li>
+          <li><a href="speakers.html">Speakers</a></li>
+          <li><a href="exposition.html">Exposition</a></li>
+          <li><a href="login.html" id="authLink" class="active">Login</a></li>
+          <li><a href="register.html" class="nav-cta">Register Now</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main>
+      <section class="register-section">
+        <div class="container">
+          <div class="register-grid">
+
+            <div class="register-info fade-in">
+              <span class="section-label">Welcome Back</span>
+              <h2>Login to your account</h2>
+              <p>Access your registration details and stay up to date with conference announcements.</p>
+
+              <div class="info-list" style="margin-top:20px;">
+                <div class="info-item">
+                  <span class="info-icon">&#128272;</span>
+                  <div class="info-item-text">
+                    <strong>Secure sessions</strong>
+                    <span>You're logged in using a secure session cookie.</span>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <span class="info-icon">&#128231;</span>
+                  <div class="info-item-text">
+                    <strong>No account yet?</strong>
+                    <span><a href="register.html" style="color:var(--primary); font-weight:600;">Create an account</a> in under a minute.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="register-form-card fade-in">
+              <h3>Login</h3>
+              <p class="subtitle">Enter your email and password.</p>
+
+              <form id="loginForm">
+                <div class="form-group">
+                  <label class="form-label" for="loginEmail">Email Address</label>
+                  <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="loginPassword">Password</label>
+                  <input type="password" id="loginPassword" class="form-input" placeholder="Your password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:16px; font-size:1rem; margin-top:8px;">
+                  Login
+                </button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="index.html" class="nav-logo">
+              <span class="logo-icon">&#9733;</span>
+              <span>Space Frontiers <em>Pakistan</em></span>
+            </a>
+            <p>A premier space technology and innovation conference hosted by Nexus Events.</p>
+          </div>
+          <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="agenda.html">Agenda</a></li>
+              <li><a href="speakers.html">Speakers</a></li>
+              <li><a href="exposition.html">Exposition</a></li>
+              <li><a href="register.html">Register</a></li>
+            </ul>
+          </div>
+          <div class="footer-contact">
+            <h4>Contact</h4>
+            <p>Islamabad Convention Centre<br>Islamabad, Pakistan</p>
+            <p>info@spacefrontiers.pk<br>+92 51 123 4567</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 Space Frontiers Pakistan. All rights reserved. Hosted by Nexus Events.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/main.js" defer></script>
+  </body>
+</html>
+

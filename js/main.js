@@ -67,6 +67,26 @@
   });
 })();
 
+// ======== AUTH NAV (LOGIN / LOGOUT) ========
+(function() {
+  const authLink = document.getElementById('authLink');
+  if (!authLink) return;
+
+  apiGet('/api/me').then(function(res) {
+    if (!res || !res.authenticated) return;
+    authLink.textContent = 'Logout';
+    authLink.setAttribute('href', '#');
+    authLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      apiPost('/api/logout', {}).finally(function() {
+        window.location.href = 'index.html';
+      });
+    });
+  }).catch(function() {
+    // Ignore: backend may not be running when viewing static files.
+  });
+})();
+
 // ======== STAR FIELD GENERATOR ========
 (function() {
   const container = document.getElementById('stars');
@@ -226,6 +246,40 @@
   });
 })();
 
+// ======== API HELPERS (AUTH) ========
+async function apiPost(url, data) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify(data || {}),
+  });
+  let payload = null;
+  try { payload = await res.json(); } catch (_) { payload = null; }
+  if (!res.ok) {
+    const msg = payload && payload.error ? payload.error : 'Request failed.';
+    const err = new Error(msg);
+    err.status = res.status;
+    err.payload = payload;
+    throw err;
+  }
+  return payload;
+}
+
+async function apiGet(url) {
+  const res = await fetch(url, { credentials: 'same-origin' });
+  let payload = null;
+  try { payload = await res.json(); } catch (_) { payload = null; }
+  if (!res.ok) {
+    const msg = payload && payload.error ? payload.error : 'Request failed.';
+    const err = new Error(msg);
+    err.status = res.status;
+    err.payload = payload;
+    throw err;
+  }
+  return payload;
+}
+
 // ======== SCROLL FADE IN ========
 (function() {
   const elements = document.querySelectorAll('.fade-in');
@@ -272,6 +326,28 @@
     if (hint) hint.style.display = 'none';
   }
 
+  function showFormMessage(message) {
+    let box = document.getElementById('registerFormError');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'registerFormError';
+      box.style.marginTop = '12px';
+      box.style.padding = '12px 14px';
+      box.style.borderRadius = '10px';
+      box.style.border = '1px solid rgba(248, 113, 113, 0.35)';
+      box.style.background = 'rgba(248, 113, 113, 0.12)';
+      box.style.color = '#fecaca';
+      form.appendChild(box);
+    }
+    box.textContent = message;
+    box.style.display = 'block';
+  }
+
+  function clearFormMessage() {
+    const box = document.getElementById('registerFormError');
+    if (box) box.style.display = 'none';
+  }
+
   function validateField(input) {
     const value = input.value.trim();
     if (input.required && !value) {
@@ -307,6 +383,7 @@
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
+    clearFormMessage();
     let valid = true;
     form.querySelectorAll('input[required], select[required]').forEach(function(input) {
       if (!validateField(input)) valid = false;
@@ -314,9 +391,72 @@
 
     if (!valid) return;
 
-    // Simulate submission
-    form.style.display = 'none';
-    if (success) success.style.display = 'block';
+    const firstName = (document.getElementById('firstName') || {}).value || '';
+    const lastName = (document.getElementById('lastName') || {}).value || '';
+    const email = (document.getElementById('email') || {}).value || '';
+    const password = (document.getElementById('password') || {}).value || '';
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    apiPost('/api/register', {
+      firstName: String(firstName).trim(),
+      lastName: String(lastName).trim(),
+      email: String(email).trim(),
+      password: String(password),
+    }).then(function() {
+      form.style.display = 'none';
+      if (success) success.style.display = 'block';
+      setTimeout(function() { window.location.href = 'index.html'; }, 900);
+    }).catch(function(err) {
+      showFormMessage(err && err.message ? err.message : 'Registration failed.');
+    }).finally(function() {
+      if (submitBtn) submitBtn.disabled = false;
+    });
+  });
+})();
+
+// ======== LOGIN FORM ========
+(function() {
+  const form = document.getElementById('loginForm');
+  if (!form) return;
+
+  function showMessage(message) {
+    let box = document.getElementById('loginFormError');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'loginFormError';
+      box.style.marginTop = '12px';
+      box.style.padding = '12px 14px';
+      box.style.borderRadius = '10px';
+      box.style.border = '1px solid rgba(248, 113, 113, 0.35)';
+      box.style.background = 'rgba(248, 113, 113, 0.12)';
+      box.style.color = '#fecaca';
+      form.appendChild(box);
+    }
+    box.textContent = message;
+    box.style.display = 'block';
+  }
+
+  function clearMessage() {
+    const box = document.getElementById('loginFormError');
+    if (box) box.style.display = 'none';
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    clearMessage();
+
+    const email = (document.getElementById('loginEmail') || {}).value || '';
+    const password = (document.getElementById('loginPassword') || {}).value || '';
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    apiPost('/api/login', { email: String(email).trim(), password: String(password) })
+      .then(function() { window.location.href = 'index.html'; })
+      .catch(function(err) { showMessage(err && err.message ? err.message : 'Login failed.'); })
+      .finally(function() { if (submitBtn) submitBtn.disabled = false; });
   });
 })();
 
